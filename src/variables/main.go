@@ -2,15 +2,18 @@ package main
 
 import "fmt"
 
-	var b int
-	b = 22
-
-	var c string = "Oi Bruno"
-	var d, e string = "Ana", "Rodrigo"
-
 func main() {
-	//Atribuir uma variavel, só posso usar dentro de uma função (Short Hand Method)
+
 	a := 10
-	// Imprimir uma variavel
+	b := "Hello"
+	c := 10.45
+	d := false
+	e := 'W'
+	f := `Uouuuu`
 	fmt.Printf("%v \n", a)
+	fmt.Printf("%v \n", b)
+	fmt.Printf("%v \n", c)
+	fmt.Printf("%v \n", d)
+	fmt.Printf("%v \n", e)
+	fmt.Printf("%v \n", f)
 }
