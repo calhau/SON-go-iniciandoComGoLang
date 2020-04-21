@@ -9,7 +9,10 @@ func main() {
 	c := 10.45
 	d := false
 	e := 'W'
-	f := `Uouuuu`
+	//Backtipes serve para colocar varias linhas
+	f := `Uouuuu!
+	Esse é um exemplo de texto longo!
+	`
 	fmt.Printf("%T \n", a)
 	fmt.Printf("%T \n", b)
 	fmt.Printf("%T \n", c)
