@@ -27,6 +27,14 @@ func variadicFunc(x ...int) int {
 	return res
 }
 
+func funcInsideFunc() func() int {
+	x := 12
+
+	return func() int {
+		return x * x
+	}
+}
+
 func main() {
 	fmt.Println(testando(10))
 
@@ -45,4 +53,19 @@ func main() {
 
 	fmt.Println("Imprimindo variadicFun()")
 	fmt.Println(variadicFunc(1, 2, 5, 10, 13))
+
+	//Funcao sendo atribuida a variaveç, funcao anonima
+	z := 0
+	add := func() int {
+		z += 2
+		return z
+	}
+
+	fmt.Println("Imprimindo funAnonima")
+	fmt.Println(add())
+	fmt.Println(add())
+	fmt.Println(add())
+
+	fmt.Println("FuncInsideFunc()")
+	fmt.Println(funcInsideFunc())
 }
