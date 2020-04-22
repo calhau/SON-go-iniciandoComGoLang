@@ -24,13 +24,25 @@ var db, err = sql.Open("mysql", "root:root@/go_course?charset=utf8")
 func main() {
 
 	//Insert no Banco de dados
-	stmt, err := db.Prepare("Insert into post(title,body) values (?,?)")
-	checkErr(err)
+	// stmt, err := db.Prepare("Insert into post(title,body) values (?,?)")
+	// checkErr(err)
 
-	_, err = stmt.Exec("Meu segundo posttt", "Meu segundo conteudo")
-	checkErr(err)
+	// _, err = stmt.Exec("Meu segundo posttt", "Meu segundo conteudo")
+	// checkErr(err)
+	// db.Close()
 
-	db.Close()
+	rows, err := db.Query("Select * from post")
+	checkErr(err)
+	// items := []Post{}
+
+	for rows.Next() {
+		var id int
+		var title string
+		var body string
+
+		rows.Scan(&id, &title, &body)
+		fmt.Println(id, title, body)
+	}
 
 	// Exemplo de rota padrao
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
