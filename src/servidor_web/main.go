@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 )
 
 type Post struct {
@@ -23,6 +24,9 @@ var db, err = sql.Open("mysql", "root:root@/go_course?charset=utf8")
 
 func main() {
 
+	r := mux.NewRouter()
+	r.HandleFunc("/posts", HomeHandler)
+
 	//Insert no Banco de dados
 	// stmt, err := db.Prepare("Insert into post(title,body) values (?,?)")
 	// checkErr(err)
@@ -31,54 +35,58 @@ func main() {
 	// checkErr(err)
 	// db.Close()
 
+	// Exemplo de rota padrao
+	// http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+	// 	fmt.Fprintf(rw, "Hello World")
+	// })
+
+	// Exemplo de rota com template
+	// http.HandleFunc("/template", func(rw http.ResponseWriter, r *http.Request) {
+	// 	if title := r.FormValue("title"); title != "" {
+	// 		post.Title = title
+	// 	}
+
+	// 	t := template.Must(template.ParseFiles("templates/index.html"))
+	// 	//t.ExecuteTemplate(rw, "index.html", nil)
+	// 	if err := t.ExecuteTemplate(rw, "index.html", post); err != nil {
+	// 		http.Error(rw, err.Error(), http.StatusInternalServerError)
+	// 	}
+	// })
+
+	// Exemplo de rota com template para posts
+	// http.HandleFunc("/posts", func(rw http.ResponseWriter, r *http.Request) {
+	// 	t := template.Must(template.ParseFiles("templates/posts.html"))
+	// 	//t.ExecuteTemplate(rw, "index.html", nil)
+	// 	if err := t.ExecuteTemplate(rw, "posts.html", items); err != nil {
+	// 		http.Error(rw, err.Error(), http.StatusInternalServerError)
+	// 	}
+	// })
+
+	//Criando servidor de App na porta 8080
+	// fmt.Println(http.ListenAndServe(":8080", nil))
+	fmt.Println(http.ListenAndServe(":8080", r))
+
+}
+
+func ListPosts() []Post {
 	rows, err := db.Query("Select * from post")
 	checkErr(err)
 	items := []Post{}
 
 	for rows.Next() {
-		//Forma antiga
-		// var id int
-		// var title string
-		// var body string
-		// rows.Scan(&id, &title, &body)
-		// fmt.Println(id, title, body)
-
-		//FormaNova
 		post := Post{}
 		rows.Scan(&post.Id, &post.Title, &post.Body)
 		items = append(items, post)
 	}
+	return items
+}
 
-	// Exemplo de rota padrao
-	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(rw, "Hello World")
-	})
-
-	// Exemplo de rota com template
-	http.HandleFunc("/template", func(rw http.ResponseWriter, r *http.Request) {
-		if title := r.FormValue("title"); title != "" {
-			post.Title = title
-		}
-
-		t := template.Must(template.ParseFiles("templates/index.html"))
-		//t.ExecuteTemplate(rw, "index.html", nil)
-		if err := t.ExecuteTemplate(rw, "index.html", post); err != nil {
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-		}
-	})
-
-	// Exemplo de rota com template para posts
-	http.HandleFunc("/posts", func(rw http.ResponseWriter, r *http.Request) {
-		t := template.Must(template.ParseFiles("templates/posts.html"))
-		//t.ExecuteTemplate(rw, "index.html", nil)
-		if err := t.ExecuteTemplate(rw, "posts.html", items); err != nil {
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-		}
-	})
-
-	//Criando servidor de App na porta 8080
-	fmt.Println(http.ListenAndServe(":8080", nil))
-
+func HomeHandler(rw http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles("templates/posts.html"))
+	//t.ExecuteTemplate(rw, "index.html", nil)
+	if err := t.ExecuteTemplate(rw, "posts.html", ListPosts()); err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func checkErr(err error) {
