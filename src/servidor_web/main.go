@@ -30,6 +30,8 @@ func main() {
 	_, err = stmt.Exec("Meu segundo posttt", "Meu segundo conteudo")
 	checkErr(err)
 
+	db.Close()
+
 	// Exemplo de rota padrao
 	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(rw, "Hello World")
