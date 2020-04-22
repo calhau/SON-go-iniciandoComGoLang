@@ -33,15 +33,20 @@ func main() {
 
 	rows, err := db.Query("Select * from post")
 	checkErr(err)
-	// items := []Post{}
+	items := []Post{}
 
 	for rows.Next() {
-		var id int
-		var title string
-		var body string
+		//Forma antiga
+		// var id int
+		// var title string
+		// var body string
+		// rows.Scan(&id, &title, &body)
+		// fmt.Println(id, title, body)
 
-		rows.Scan(&id, &title, &body)
-		fmt.Println(id, title, body)
+		//FormaNova
+		post := Post{}
+		rows.Scan(&post.Id, &post.Title, &post.Body)
+		items = append(items, post)
 	}
 
 	// Exemplo de rota padrao
@@ -58,6 +63,15 @@ func main() {
 		t := template.Must(template.ParseFiles("templates/index.html"))
 		//t.ExecuteTemplate(rw, "index.html", nil)
 		if err := t.ExecuteTemplate(rw, "index.html", post); err != nil {
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+		}
+	})
+
+	// Exemplo de rota com template para posts
+	http.HandleFunc("/posts", func(rw http.ResponseWriter, r *http.Request) {
+		t := template.Must(template.ParseFiles("templates/posts.html"))
+		//t.ExecuteTemplate(rw, "index.html", nil)
+		if err := t.ExecuteTemplate(rw, "posts.html", items); err != nil {
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 		}
 	})
