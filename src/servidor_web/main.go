@@ -25,8 +25,11 @@ var db, err = sql.Open("mysql", "root:root@/go_course?charset=utf8")
 func main() {
 
 	r := mux.NewRouter()
+
+	r.HandleFunc("/{id}/view", ViewHandler)
 	r.HandleFunc("/posts", HomeHandler)
 	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("static/"))))
+
 	//Insert no Banco de dados
 	// stmt, err := db.Prepare("Insert into post(title,body) values (?,?)")
 	// checkErr(err)
@@ -81,10 +84,26 @@ func ListPosts() []Post {
 	return items
 }
 
+func GetPostById(id string) Post {
+	row := db.QueryRow("select * from post where id=?", id)
+	post := Post{}
+	row.Scan(&post.Id, &post.Title, &post.Body)
+	return post
+}
+
 func HomeHandler(rw http.ResponseWriter, r *http.Request) {
 	t := template.Must(template.ParseFiles("templates/posts.html"))
 	//t.ExecuteTemplate(rw, "index.html", nil)
 	if err := t.ExecuteTemplate(rw, "posts.html", ListPosts()); err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func ViewHandler(rw http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	t := template.Must(template.ParseFiles("templates/view.html"))
+	//t.ExecuteTemplate(rw, "index.html", nil)
+	if err := t.ExecuteTemplate(rw, "view.html", GetPostById(id)); err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 	}
 }
