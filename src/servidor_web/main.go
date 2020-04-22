@@ -26,7 +26,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/posts", HomeHandler)
-
+	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("static/"))))
 	//Insert no Banco de dados
 	// stmt, err := db.Prepare("Insert into post(title,body) values (?,?)")
 	// checkErr(err)
